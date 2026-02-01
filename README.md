@@ -42,7 +42,7 @@ You might see a warning saying *"Net Bar is damaged and can't be opened"* or *"c
 This happens because I am an independent developer and do not have a paid Apple Developer Program membership ($99/year). Therefore, I cannot "sign" the app with an Apple certificate. **The app is not actually damaged.**
 
 **The Solution:**
-The installer includes a simple script to fix this in one click. See the installation instructions below.
+You can easily fix this by running a simple terminal command. See the installation instructions below.
 
 ## 📥 Installation
 
@@ -51,10 +51,10 @@ The installer includes a simple script to fix this in one click. See the install
 1.  **Download** the latest `NetBar_Installer.dmg` from the [Releases](https://github.com/iad1tya/Net-Bar/releases) page.
 2.  **Open** the `.dmg` file.
 3.  **Drag** `Net Bar.app` into the `Applications` folder.
-4.  **Important**: Because the app is unsigned, you must run the fix script:
-    - Double-click **`Fix Permissions.command`** inside the DMG window.
-    - A terminal window will open to authorize the app.
-    - Once it says "Done!", close the terminal.
+4.  **Important**: If you see a warning that the app is "damaged", it is because it is not signed. Run this command in Terminal to fix it:
+    ```bash
+    xattr -rd com.apple.quarantine /Applications/NetBar.app
+    ```
 5.  Launch **Net Bar** from your Applications folder.
 
 ### Option 2: Build from Source
