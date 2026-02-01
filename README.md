@@ -9,57 +9,55 @@
 </p>
 
 <p align="center">
-  <b>A lightweight, aesthetically pleasing network speed monitor that lives in your macOS menu bar.</b>
+  <b>A lightweight, aesthetically pleasing network speed monitor for the macOS menu bar.</b>
   <br>
   Real-time download/upload speeds • Detailed diagnostics • Fully customizable
 </p>
 
 ---
 
-## 🚀 Features
+## Overview
 
-- **Real-time Monitoring**: View current download and upload speeds directly in your menu bar.
-- **Detailed Stats**: Click the menu bar icon to see rich diagnostics:
-  - **Wi-Fi Details**: SSID, Link Rate, Signal Strength, and Noise graphs.
-  - **Latency**: Continuous Ping and Jitter monitoring to your router and the internet (1.1.1.1).
-- **Customizable**:
+Net Bar provides real-time network monitoring directly in your menu bar. It allows users to view download and upload speeds at a glance and access detailed network diagnostics with a single click.
+
+## Features
+
+- **Real-time Monitoring**: View current download and upload speeds in the menu bar.
+- **Detailed Statistics**: Access rich diagnostics including Wi-Fi details (SSID, Link Rate, Signal Strength, Noise) and Latency (Ping and Jitter).
+- **Customization**:
   - **Typography**: Adjust font size, line spacing, and kerning.
-  - **Display Modes**: Show download, upload, or both.
+  - **Display Modes**: Choose to show download, upload, or both monitoring stats.
   - **Units**: Switch between Bytes (MB/s) and Bits (Mbps).
-  - **Appearance**: Toggle direction arrows and more.
+  - **Appearance**: Toggle direction arrows and other visual elements.
 - **Native Experience**: Built with SwiftUI and AppKit for seamless macOS integration.
 
-## 🔒 Safety & Privacy
+## Privacy and Security
 
-**Net Bar is 100% Open Source and Safe.**
+Net Bar is fully open source. The application does not collect, store, or transmit any personal data. All network monitoring is performed locally on the device.
 
-This application does **not** collect, store, or transmit any of your personal data. All network monitoring happens locally on your machine. You can verify this by checking the source code in this repository.
+### Gatekeeper Warning
 
-### "App is Damaged" Warning?
-You might see a warning saying *"Net Bar is damaged and can't be opened"* or *"can't be opened because Apple cannot check it for malicious software"*.
+As this application is not signed with an Apple Developer certificate, macOS may display a warning stating that the app is "damaged" or "cannot be opened." This is a standard security message for unsigned software.
 
-**Why?**
-This happens because I am an independent developer and do not have a paid Apple Developer Program membership ($99/year). Therefore, I cannot "sign" the app with an Apple certificate. **The app is not actually damaged.**
+To resolve this, execute the following command in Terminal after moving the app to the Applications folder:
 
-**The Solution:**
-You can easily fix this by running a simple terminal command. See the installation instructions below.
+```bash
+xattr -rd com.apple.quarantine /Applications/NetBar.app
+```
 
-## 📥 Installation
+## Installation
 
-### Option 1: DMG Installer (Recommended)
+### DMG Installer (Recommended)
 
-1.  **Download** the latest `NetBar_Installer.dmg` from the [Releases](https://github.com/iad1tya/Net-Bar/releases) page.
-2.  **Open** the `.dmg` file.
-3.  **Drag** `Net Bar.app` into the `Applications` folder.
-4.  **Important**: If you see a warning that the app is "damaged", it is because it is not signed. Run this command in Terminal to fix it:
-    ```bash
-    xattr -rd com.apple.quarantine /Applications/NetBar.app
-    ```
-5.  Launch **Net Bar** from your Applications folder.
+1.  Download the latest `NetBar_Installer.dmg` from the [Releases](https://github.com/iad1tya/Net-Bar/releases) page.
+2.  Open the mounted image.
+3.  Drag `Net Bar.app` into the `Applications` directory.
+4.  Run the Gatekeeper command mentioned above if necessary.
+5.  Launch Net Bar from the Applications folder.
 
-### Option 2: Build from Source
+### Build from Source
 
-If you prefer to compile it yourself:
+To compile the application manually:
 
 1.  **Clone the repository**:
     ```bash
@@ -68,7 +66,7 @@ If you prefer to compile it yourself:
     ```
 
 2.  **Build and Install**:
-    Run the following command to build and install to Applications:
+    Run the following script to build and install the application to the Applications folder:
 
     ```bash
     swift build -c release && \
@@ -84,13 +82,17 @@ If you prefer to compile it yourself:
     mv "Net Bar.app" /Applications/
     ```
 
-## 💻 Requirements
+## Requirements
 
 - macOS 14.0 (Sonoma) or later.
 
-## ❤️ Support
+## Inspiration
 
-If you enjoy **Net Bar**, please consider supporting the development!
+The **More Info** page design draws inspiration from [Whyfi](https://whyfi.network/).
+
+## Support
+
+If you find Net Bar useful, please consider supporting its development.
 
 <div align="center">
 
@@ -98,13 +100,11 @@ If you enjoy **Net Bar**, please consider supporting the development!
   <img src="assets/bmac.png" alt="Buy Me A Coffee" height="50">
 </a>
 
-
 | Currency | Address |
 | :--- | :--- |
 | **Bitcoin (BTC)** | `bc1qcvyr7eekha8uytmffcvgzf4h7xy7shqzke35fy` |
 | **Ethereum (ETH)** | `0x51bc91022E2dCef9974D5db2A0e22d57B360e700` |
 | **Solana (SOL)** | `9wjca3EQnEiqzqgy7N5iqS1JGXJiknMQv6zHgL96t94S` |
-
 
 [Visit Support Website](https://support.iad1tya.cyou)
 
