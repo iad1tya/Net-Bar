@@ -1,5 +1,3 @@
-# Net Bar
-
 <p align="center">
   <img src="assets/icon.png" alt="Net Bar Icon" width="128" height="128">
 </p>
@@ -16,13 +14,9 @@
   Real-time download/upload speeds • Detailed diagnostics • Fully customizable
 </p>
 
-## Screenshots
+---
 
-<p align="center">
-  <img src="Screenshots/sc.png" alt="Net Bar Screenshot" width="50%" style="border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
-</p>
-
-## Features
+## 🚀 Features
 
 - **Real-time Monitoring**: View current download and upload speeds directly in your menu bar.
 - **Detailed Stats**: Click the menu bar icon to see rich diagnostics:
@@ -35,9 +29,37 @@
   - **Appearance**: Toggle direction arrows and more.
 - **Native Experience**: Built with SwiftUI and AppKit for seamless macOS integration.
 
-## Installation
+## 🔒 Safety & Privacy
 
-### From Source
+**Net Bar is 100% Open Source and Safe.**
+
+This application does **not** collect, store, or transmit any of your personal data. All network monitoring happens locally on your machine. You can verify this by checking the source code in this repository.
+
+### "App is Damaged" Warning?
+You might see a warning saying *"Net Bar is damaged and can't be opened"* or *"can't be opened because Apple cannot check it for malicious software"*.
+
+**Why?**
+This happens because I am an independent developer and do not have a paid Apple Developer Program membership ($99/year). Therefore, I cannot "sign" the app with an Apple certificate. **The app is not actually damaged.**
+
+**The Solution:**
+The installer includes a simple script to fix this in one click. See the installation instructions below.
+
+## 📥 Installation
+
+### Option 1: DMG Installer (Recommended)
+
+1.  **Download** the latest `NetBar_Installer.dmg` from the [Releases](https://github.com/iad1tya/Net-Bar/releases) page.
+2.  **Open** the `.dmg` file.
+3.  **Drag** `Net Bar.app` into the `Applications` folder.
+4.  **Important**: Because the app is unsigned, you must run the fix script:
+    - Double-click **`Fix Permissions.command`** inside the DMG window.
+    - A terminal window will open to authorize the app.
+    - Once it says "Done!", close the terminal.
+5.  Launch **Net Bar** from your Applications folder.
+
+### Option 2: Build from Source
+
+If you prefer to compile it yourself:
 
 1.  **Clone the repository**:
     ```bash
@@ -46,7 +68,7 @@
     ```
 
 2.  **Build and Install**:
-    Run the following command in your terminal to build the app and install it to your Applications folder:
+    Run the following command to build and install to Applications:
 
     ```bash
     swift build -c release && \
@@ -62,14 +84,11 @@
     mv "Net Bar.app" /Applications/
     ```
 
-3.  **Run**:
-    Open "Net Bar" from your Applications folder.
-
-## Requirements
+## 💻 Requirements
 
 - macOS 14.0 (Sonoma) or later.
 
-## Support
+## ❤️ Support
 
 If you enjoy **Net Bar**, please consider supporting the development!
 
