@@ -30,13 +30,12 @@ struct StatGraphView: View {
                 )
                 .foregroundStyle(color)
                 .interpolationMethod(.monotone)
-                .lineStyle(StrokeStyle(lineWidth: 1.5))
+                .lineStyle(StrokeStyle(lineWidth: 2.0))
             }
         }
         .chartXAxis(.hidden)
         .chartYAxis(.hidden)
-        .chartYScale(domain: .automatic)
-        .chartYScale(domain: .automatic)
+        .chartYScale(domain: minRange...max(maxRange, data.max() ?? maxRange))
         .frame(height: height)
         .clipped()
     }

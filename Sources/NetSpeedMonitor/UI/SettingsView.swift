@@ -106,6 +106,51 @@ struct SettingsView: View {
                     ))
                 }
                 
+                Section("Misc (System Stats)") {
+                    VStack(alignment: .leading) {
+                        Toggle("CPU Usage", isOn: Binding(
+                            get: { UserDefaults.standard.object(forKey: "showCPU") as? Bool ?? false },
+                            set: { UserDefaults.standard.set($0, forKey: "showCPU") }
+                        ))
+                        Toggle("Show in Menu Bar", isOn: $menuBarState.showCPUMenu)
+                            .font(.caption)
+                            .padding(.leading, 20)
+                            .disabled(!(UserDefaults.standard.object(forKey: "showCPU") as? Bool ?? false))
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Toggle("Memory Usage", isOn: Binding(
+                            get: { UserDefaults.standard.object(forKey: "showMemory") as? Bool ?? false },
+                            set: { UserDefaults.standard.set($0, forKey: "showMemory") }
+                        ))
+                        Toggle("Show in Menu Bar", isOn: $menuBarState.showMemoryMenu)
+                            .font(.caption)
+                            .padding(.leading, 20)
+                             .disabled(!(UserDefaults.standard.object(forKey: "showMemory") as? Bool ?? false))
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        Toggle("Disk Usage", isOn: Binding(
+                            get: { UserDefaults.standard.object(forKey: "showDisk") as? Bool ?? false },
+                            set: { UserDefaults.standard.set($0, forKey: "showDisk") }
+                        ))
+                        Toggle("Show in Menu Bar", isOn: $menuBarState.showDiskMenu)
+                            .font(.caption)
+                            .padding(.leading, 20)
+                             .disabled(!(UserDefaults.standard.object(forKey: "showDisk") as? Bool ?? false))
+                    }
+                    
+                    Toggle("Energy / Battery", isOn: Binding(
+                        get: { UserDefaults.standard.object(forKey: "showEnergy") as? Bool ?? false },
+                        set: { UserDefaults.standard.set($0, forKey: "showEnergy") }
+                    ))
+                    
+                    Toggle("Temperature", isOn: Binding(
+                         get: { UserDefaults.standard.object(forKey: "showTemp") as? Bool ?? false },
+                         set: { UserDefaults.standard.set($0, forKey: "showTemp") }
+                     ))
+                }
+                
                 Section("General") {
                 Picker("Unit Type", selection: $unitType) {
                     Text("Bytes (MB/s)").tag(UnitType.bytes)

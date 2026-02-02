@@ -25,6 +25,10 @@ class MenuBarState: ObservableObject {
     @AppStorage("textSpacing") var textSpacing: Double = 0.0
     @AppStorage("characterSpacing") var characterSpacing: Double = 0.0
     
+    @AppStorage("showCPUMenu") var showCPUMenu: Bool = false
+    @AppStorage("showMemoryMenu") var showMemoryMenu: Bool = false
+    @AppStorage("showDiskMenu") var showDiskMenu: Bool = false
+    
     @Published var menuText = ""
     
     var currentIcon: NSImage {
@@ -43,6 +47,7 @@ class MenuBarState: ObservableObject {
     private var timer: Timer?
     private var primaryInterface: String?
     private var netTrafficStat = NetTrafficStatReceiver()
+    private var systemStatsService = SystemStatsService.shared
     
     // Session tracking
     @Published var totalUpload: Double = 0.0
@@ -147,7 +152,27 @@ class MenuBarState: ObservableObject {
                             text += "\(self.showArrows ? "↓ " : "")\(downVal) \(downUnit)"
                         }
                         
-                        self.menuText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                        // System Stats
+                        var statsList: [String] = []
+                        if self.showCPUMenu {
+                            statsList.append("CPU: \(Int(self.systemStatsService.stats.cpuUsage))%")
+                        }
+                        if self.showMemoryMenu {
+                            statsList.append("RAM: \(Int(self.systemStatsService.stats.memoryUsage))%")
+                        }
+                        if self.showDiskMenu {
+                            statsList.append("HDD: \(Int(self.systemStatsService.stats.diskUsage))%")
+                        }
+                        
+                        let systemStatsText = statsList.joined(separator: " | ")
+                        
+                        if !systemStatsText.isEmpty {
+                            text = text.trimmingCharacters(in: .whitespacesAndNewlines) + " | " + systemStatsText
+                        } else {
+                            text = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                        }
+                        
+                        self.menuText = text
                     }
                 }
             }

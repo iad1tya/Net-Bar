@@ -3,6 +3,7 @@ import Charts
 
 struct DetailedStatusView: View {
     @StateObject private var statsService = NetworkStatsService()
+    @ObservedObject private var systemStatsService = SystemStatsService.shared
     @EnvironmentObject var menuBarState: MenuBarState
     @Environment(\.openWindow) var openWindow
     
@@ -17,8 +18,15 @@ struct DetailedStatusView: View {
     @AppStorage("showInternet") private var showInternet = true
     @AppStorage("showTips") private var showTips = true
     
+    @AppStorage("showCPU") private var showCPU = false
+    @AppStorage("showMemory") private var showMemory = false
+    @AppStorage("showDisk") private var showDisk = false
+    @AppStorage("showEnergy") private var showEnergy = false
+    @AppStorage("showTemp") private var showTemp = false
+    
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
             // Header
             HStack {
                 VStack(alignment: .leading) {
@@ -288,6 +296,137 @@ struct DetailedStatusView: View {
                 }
             }
             
+            if showCPU {
+                 if showTraffic || showConnection || showRouter || showDNS || showInternet { Divider() }
+                 VStack(alignment: .leading) {
+                     Text("Processor")
+                         .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                     Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                         GridRow(alignment: .center) {
+                             Text("Usage")
+                                 .foregroundStyle(.secondary)
+                             Text(String(format: "%.1f%%", systemStatsService.stats.cpuUsage))
+                                 .foregroundStyle(systemStatsService.stats.cpuUsage > 80 ? .red : .primary)
+                                 .monospacedDigit()
+                         }
+                         GridRow(alignment: .center) {
+                             Text("Cores")
+                                 .foregroundStyle(.secondary)
+                             Text("\(systemStatsService.stats.physicalCores) Physical / \(systemStatsService.stats.activeCores) Active")
+                                 .foregroundStyle(.secondary)
+                                 .font(.body) // Was caption
+                             Spacer()
+                         }
+                     }
+                 }
+            }
+            
+            if showMemory {
+                if showTraffic || showConnection || showRouter || showDNS || showInternet || showCPU { Divider() }
+                VStack(alignment: .leading) {
+                    Text("Memory")
+                        .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                        GridRow(alignment: .center) {
+                            Text("Usage")
+                                 .foregroundStyle(.secondary)
+                            Text(String(format: "%.1f%%", systemStatsService.stats.memoryUsage))
+                                .foregroundStyle(systemStatsService.stats.memoryUsage > 80 ? .red : .primary)
+                                .monospacedDigit()
+                        }
+                         GridRow(alignment: .center) {
+                            Text("Used")
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.2f GB", systemStatsService.stats.memoryUsed))
+                                .foregroundStyle(.secondary)
+                                .monospacedDigit()
+                             Text(String(format: "/ %.0f GB", systemStatsService.stats.memoryTotal))
+                                 .foregroundStyle(.secondary)
+                                 .font(.body) // Was callout
+                        }
+                    }
+                }
+            }
+
+            if showDisk {
+                if showTraffic || showConnection || showRouter || showDNS || showInternet || showCPU || showMemory { Divider() }
+                 VStack(alignment: .leading) {
+                    Text("Disk")
+                        .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                        GridRow(alignment: .center) {
+                            Text("Usage")
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.1f%%", systemStatsService.stats.diskUsage))
+                                .foregroundStyle(systemStatsService.stats.diskUsage > 90 ? .red : .primary)
+                                .monospacedDigit()
+                        }
+                         GridRow(alignment: .center) {
+                            Text("Free")
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.0f GB", systemStatsService.stats.diskFree))
+                                .foregroundStyle(.secondary)
+                                .monospacedDigit()
+                             Spacer()
+                        }
+                    }
+                }
+            }
+            
+            if showEnergy {
+                 if showTraffic || showConnection || showRouter || showDNS || showInternet || showCPU || showMemory || showDisk { Divider() }
+                 VStack(alignment: .leading) {
+                    Text("Battery")
+                        .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                     
+                     Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                         GridRow(alignment: .center) {
+                             Text("Level")
+                                 .foregroundStyle(.secondary)
+                             
+                             HStack(spacing: 4) {
+                                 Image(systemName: systemStatsService.stats.isCharging ? "bolt.fill" : "battery.100")
+                                    .foregroundStyle(systemStatsService.stats.isCharging ? .yellow : .green)
+                                 Text(String(format: "%.0f%%", systemStatsService.stats.batteryLevel))
+                                      .monospacedDigit()
+                             }
+                         }
+                         
+                         if systemStatsService.stats.timeRemaining > 0 {
+                             GridRow(alignment: .center) {
+                                  Text("Time")
+                                      .foregroundStyle(.secondary)
+                                  Text("\(systemStatsService.stats.timeRemaining) min")
+                                      .foregroundStyle(.secondary)
+                                      .monospacedDigit()
+                                  Spacer()
+                             }
+                         }
+                     }
+                }
+            }
+            
+            if showTemp {
+                 if showTraffic || showConnection || showRouter || showDNS || showInternet || showCPU || showMemory || showDisk || showEnergy { Divider() }
+                 VStack(alignment: .leading) {
+                    Text("Thermal State")
+                        .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                     
+                     Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                         GridRow(alignment: .center) {
+                             Text("State")
+                                 .foregroundStyle(.secondary)
+                             
+                             HStack(spacing: 4) {
+                                  Image(systemName: "thermometer")
+                                 Text(systemStatsService.stats.thermalPressure)
+                                      .foregroundStyle(systemStatsService.stats.thermalPressure == "Normal" ? .green : .red)
+                             }
+                         }
+                     }
+                }
+            }
+            
             Divider()
             
             // Tips Section
@@ -325,15 +464,16 @@ struct DetailedStatusView: View {
             .buttonStyle(.plain)
         }
         .padding(16)
-        .frame(width: 350)
+        } // ScrollView
+        .frame(width: 350, height: 600) // Fixed height for scrollable area
         .background(Color(NSColor.windowBackgroundColor))
         .onReceive(timer) { input in
-            let diff = input.timeIntervalSince(menuBarState.appLaunchDate)
-            let hours = Int(diff) / 3600
-            let minutes = (Int(diff) % 3600) / 60
-            let seconds = Int(diff) % 60
-            uptimeString = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
-        }
+             let diff = input.timeIntervalSince(menuBarState.appLaunchDate)
+             let hours = Int(diff) / 3600
+             let minutes = (Int(diff) % 3600) / 60
+             let seconds = Int(diff) % 60
+             uptimeString = String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+         }
     }
     
     // Smart Tips Logic
