@@ -9,6 +9,14 @@ struct DetailedStatusView: View {
     @State private var uptimeString: String = "00:00:00"
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
+    @AppStorage("showTraffic") private var showTraffic = true
+    @AppStorage("showConnection") private var showConnection = true
+    @AppStorage("showRouter") private var showRouter = true
+    @AppStorage("showDNS") private var showDNS = true
+    @AppStorage("showInternet") private var showInternet = true
+    @AppStorage("showTips") private var showTips = true
+    @AppStorage("showTrafficHeader") private var showTrafficHeader = false
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             // Header
@@ -49,215 +57,233 @@ struct DetailedStatusView: View {
             } 
             
             // Traffic Section
-            VStack(alignment: .leading) {
-                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                    GridRow(alignment: .center) {
-                        Text("Download")
+            if showTraffic {
+                VStack(alignment: .leading) {
+                    if showTrafficHeader {
+                        Text("Traffic")
+                            .font(.caption)
+                            .fontWeight(.bold)
                             .foregroundStyle(.secondary)
-                        Text(menuBarState.formatBytes(menuBarState.totalDownload).0 + " " + menuBarState.formatBytes(menuBarState.totalDownload).1)
-                            .foregroundStyle(.green)
-                            .monospacedDigit()
-                        StatGraphView(
-                            data: menuBarState.downloadHistory,
-                            color: .green,
-                            minRange: 0, maxRange: 1024 * 1024,
-                            height: 16
-                        )
-                    }
-                    GridRow(alignment: .center) {
-                        Text("Upload")
-                            .foregroundStyle(.secondary)
-                        Text(menuBarState.formatBytes(menuBarState.totalUpload).0 + " " + menuBarState.formatBytes(menuBarState.totalUpload).1)
-                            .foregroundStyle(.blue)
-                            .monospacedDigit()
-                        StatGraphView(
-                            data: menuBarState.uploadHistory,
-                            color: .blue,
-                            minRange: 0, maxRange: 1024 * 1024,
-                            height: 16
-                        )
-                    }
-                    GridRow(alignment: .center) {
-                         Text("Total")
-                            .foregroundStyle(.secondary)
-                         Text(menuBarState.formatBytes(menuBarState.totalDownload + menuBarState.totalUpload).0 + " " + menuBarState.formatBytes(menuBarState.totalDownload + menuBarState.totalUpload).1)
-                             .foregroundStyle(.purple)
-                             .monospacedDigit()
-                         StatGraphView(
-                             data: menuBarState.totalTrafficHistory,
-                             color: .purple,
-                             minRange: 0, maxRange: 1024 * 1024 * 2,
-                             height: 16
-                         )
-                     }
-                }
-            }
-
-            Divider()
-            
-            // Connection Section
-            VStack(alignment: .leading) {
-                Text("Connection")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.secondary)
-                    
-                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                    GridRow(alignment: .center) {
-                        Text("Link Rate")
-                            .foregroundStyle(.secondary)
-                        Text("\(Int(statsService.stats.txRate)) Mbps")
-                            .foregroundStyle(.green)
-                            .monospacedDigit()
-                        StatGraphView(
-                            data: Array(repeating: statsService.stats.txRate, count: 20),
-                            color: .green,
-                            minRange: 0, maxRange: 1000,
-                            height: 16
-                        )
                     }
                     
-                    GridRow(alignment: .center) {
-                        Text("Signal")
-                            .foregroundStyle(.secondary)
-                        Text("\(statsService.stats.rssi) dBm")
-                            .foregroundStyle(.orange)
-                            .monospacedDigit()
-                        StatGraphView(
-                            data: statsService.signalHistory.map { Double($0) },
-                            color: .orange,
-                            minRange: -100, maxRange: -30,
-                            height: 16
-                        )
-                    }
-                    
-                    GridRow(alignment: .center) {
-                        Text("Noise")
-                            .foregroundStyle(.secondary)
-                        Text("\(statsService.stats.noise) dBm")
-                            .foregroundStyle(.green)
-                            .monospacedDigit()
-                        StatGraphView(
-                            data: statsService.noiseHistory.map { Double($0) },
-                            color: .green,
-                            minRange: -110, maxRange: -80,
-                            height: 16
-                        )
-                    }
-                }
-            }
-            
-            Divider()
-            
-            // Router Section
-            VStack(alignment: .leading) {
-                Text("Router")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.secondary)
-                
-                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                    GridRow(alignment: .center) {
-                        Text("Ping")
-                            .foregroundStyle(.secondary)
-                        Text(String(format: "%.0f ms", statsService.stats.routerPing))
-                            .foregroundStyle(.green)
-                            .monospacedDigit()
-                        StatGraphView(
-                            data: statsService.routerPingHistory,
-                            color: .green,
-                            minRange: 0, maxRange: 100,
-                            height: 16
-                        )
-                    }
-                    
-                    GridRow(alignment: .center) {
-                        Text("Jitter")
-                            .foregroundStyle(.secondary)
-                        Text(String(format: "%.1f ms", statsService.stats.routerJitter))
-                            .foregroundStyle(.yellow)
-                            .monospacedDigit()
-                         StatGraphView(
-                            data: statsService.routerPingHistory.map { abs($0 - statsService.stats.routerPing) },
-                            color: .yellow,
-                            minRange: 0, maxRange: 50,
-                            height: 16
-                        )
-                    }
-                    
-                    GridRow(alignment: .center) {
-                        Text("Loss")
-                            .foregroundStyle(.secondary)
-                        Text(String(format: "%.0f%%", statsService.stats.routerLoss))
-                            .foregroundStyle(.yellow)
-                            .monospacedDigit()
-                        Rectangle().fill(Color.orange).frame(height: 2)
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                        GridRow(alignment: .center) {
+                            Text("Download")
+                                .foregroundStyle(.secondary)
+                            Text(menuBarState.formatBytes(menuBarState.totalDownload).0 + " " + menuBarState.formatBytes(menuBarState.totalDownload).1)
+                                .foregroundStyle(.green)
+                                .monospacedDigit()
+                            StatGraphView(
+                                data: menuBarState.downloadHistory,
+                                color: .green,
+                                minRange: 0, maxRange: 1024 * 1024,
+                                height: 16
+                            )
+                        }
+                        GridRow(alignment: .center) {
+                            Text("Upload")
+                                .foregroundStyle(.secondary)
+                            Text(menuBarState.formatBytes(menuBarState.totalUpload).0 + " " + menuBarState.formatBytes(menuBarState.totalUpload).1)
+                                .foregroundStyle(.blue)
+                                .monospacedDigit()
+                            StatGraphView(
+                                data: menuBarState.uploadHistory,
+                                color: .blue,
+                                minRange: 0, maxRange: 1024 * 1024,
+                                height: 16
+                            )
+                        }
+                        GridRow(alignment: .center) {
+                             Text("Total")
+                                .foregroundStyle(.secondary)
+                             Text(menuBarState.formatBytes(menuBarState.totalDownload + menuBarState.totalUpload).0 + " " + menuBarState.formatBytes(menuBarState.totalDownload + menuBarState.totalUpload).1)
+                                 .foregroundStyle(.purple)
+                                 .monospacedDigit()
+                             StatGraphView(
+                                 data: menuBarState.totalTrafficHistory,
+                                 color: .purple,
+                                 minRange: 0, maxRange: 1024 * 1024 * 2,
+                                 height: 16
+                             )
+                         }
                     }
                 }
             }
 
-            Divider()
-            
-            // DNS Section
-            VStack(alignment: .leading) {
-                Text("DNS Router Assigned")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.secondary)
+            if showConnection {
+                // Divider only if previous sections (like Traffic) might be visible, or just always show divider if section is visible (simplest)
+                if showTraffic { Divider() }
                 
-                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                     GridRow(alignment: .center) {
-                         Text(statsService.stats.dns.isEmpty ? "Unknown" : statsService.stats.dns)
-                             .foregroundStyle(.secondary)
-                         Text(String(format: "%.0f ms", statsService.stats.dnsPing))
-                             .foregroundStyle(.cyan)
-                             .monospacedDigit()
-                         StatGraphView(
-                             data: statsService.dnsPingHistory,
-                             color: .cyan,
-                             minRange: 0, maxRange: 100,
-                             height: 16
-                         )
-                     }
+                // Connection Section
+                VStack(alignment: .leading) {
+                    Text("Connection")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
+                        
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                        GridRow(alignment: .center) {
+                            Text("Link Rate")
+                                .foregroundStyle(.secondary)
+                            Text("\(Int(statsService.stats.txRate)) Mbps")
+                                .foregroundStyle(.green)
+                                .monospacedDigit()
+                            StatGraphView(
+                                data: Array(repeating: statsService.stats.txRate, count: 20),
+                                color: .green,
+                                minRange: 0, maxRange: 1000,
+                                height: 16
+                            )
+                        }
+                        
+                        GridRow(alignment: .center) {
+                            Text("Signal")
+                                .foregroundStyle(.secondary)
+                            Text("\(statsService.stats.rssi) dBm")
+                                .foregroundStyle(.orange)
+                                .monospacedDigit()
+                            StatGraphView(
+                                data: statsService.signalHistory.map { Double($0) },
+                                color: .orange,
+                                minRange: -100, maxRange: -30,
+                                height: 16
+                            )
+                        }
+                        
+                        GridRow(alignment: .center) {
+                            Text("Noise")
+                                .foregroundStyle(.secondary)
+                            Text("\(statsService.stats.noise) dBm")
+                                .foregroundStyle(.green)
+                                .monospacedDigit()
+                            StatGraphView(
+                                data: statsService.noiseHistory.map { Double($0) },
+                                color: .green,
+                                minRange: -110, maxRange: -80,
+                                height: 16
+                            )
+                        }
+                    }
                 }
             }
             
-            Divider()
-            
-            // Internet Section
-            VStack(alignment: .leading) {
-                Text("Internet - 1.1.1.1")
-                    .font(.caption)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.secondary)
+            if showRouter {
+                if showTraffic || showConnection { Divider() }
+                
+                // Router Section
+                VStack(alignment: .leading) {
+                    Text("Router")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
                     
-                 Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                    GridRow(alignment: .center) {
-                        Text("Ping")
-                            .foregroundStyle(.secondary)
-                        Text(String(format: "%.0f ms", statsService.stats.ping))
-                            .foregroundStyle(.yellow)
-                            .monospacedDigit()
-                        StatGraphView(
-                            data: statsService.pingHistory,
-                            color: .yellow,
-                            minRange: 0, maxRange: 200,
-                            height: 16
-                        )
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                        GridRow(alignment: .center) {
+                            Text("Ping")
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.0f ms", statsService.stats.routerPing))
+                                .foregroundStyle(.green)
+                                .monospacedDigit()
+                            StatGraphView(
+                                data: statsService.routerPingHistory,
+                                color: .green,
+                                minRange: 0, maxRange: 100,
+                                height: 16
+                            )
+                        }
+                        
+                        GridRow(alignment: .center) {
+                            Text("Jitter")
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.1f ms", statsService.stats.routerJitter))
+                                .foregroundStyle(.yellow)
+                                .monospacedDigit()
+                             StatGraphView(
+                                data: statsService.routerPingHistory.map { abs($0 - statsService.stats.routerPing) },
+                                color: .yellow,
+                                minRange: 0, maxRange: 50,
+                                height: 16
+                            )
+                        }
+                        
+                        GridRow(alignment: .center) {
+                            Text("Loss")
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.0f%%", statsService.stats.routerLoss))
+                                .foregroundStyle(.yellow)
+                                .monospacedDigit()
+                            Rectangle().fill(Color.orange).frame(height: 2)
+                        }
                     }
+                }
+            }
+
+            if showDNS {
+                if showTraffic || showConnection || showRouter { Divider() }
+                
+                // DNS Section
+                VStack(alignment: .leading) {
+                    Text("DNS Router Assigned")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
                     
-                    GridRow(alignment: .center) {
-                        Text("Jitter")
-                            .foregroundStyle(.secondary)
-                        Text(String(format: "%.1f ms", statsService.stats.jitter))
-                             .foregroundStyle(.red)
-                            .monospacedDigit()
-                         StatGraphView(
-                            data: statsService.pingHistory.map { abs($0 - statsService.stats.ping) },
-                            color: .red,
-                            minRange: 0, maxRange: 50,
-                            height: 16
-                        )
+                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                         GridRow(alignment: .center) {
+                             Text(statsService.stats.dns.isEmpty ? "Unknown" : statsService.stats.dns)
+                                 .foregroundStyle(.secondary)
+                             Text(String(format: "%.0f ms", statsService.stats.dnsPing))
+                                 .foregroundStyle(.cyan)
+                                 .monospacedDigit()
+                             StatGraphView(
+                                 data: statsService.dnsPingHistory,
+                                 color: .cyan,
+                                 minRange: 0, maxRange: 100,
+                                 height: 16
+                             )
+                         }
+                    }
+                }
+            }
+            
+            if showInternet {
+                if showTraffic || showConnection || showRouter || showDNS { Divider() }
+                
+                // Internet Section
+                VStack(alignment: .leading) {
+                    Text("Internet - 1.1.1.1")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.secondary)
+                        
+                     Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                        GridRow(alignment: .center) {
+                            Text("Ping")
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.0f ms", statsService.stats.ping))
+                                .foregroundStyle(.yellow)
+                                .monospacedDigit()
+                            StatGraphView(
+                                data: statsService.pingHistory,
+                                color: .yellow,
+                                minRange: 0, maxRange: 200,
+                                height: 16
+                            )
+                        }
+                        
+                        GridRow(alignment: .center) {
+                            Text("Jitter")
+                                .foregroundStyle(.secondary)
+                            Text(String(format: "%.1f ms", statsService.stats.jitter))
+                                 .foregroundStyle(.red)
+                                .monospacedDigit()
+                             StatGraphView(
+                                data: statsService.pingHistory.map { abs($0 - statsService.stats.ping) },
+                                color: .red,
+                                minRange: 0, maxRange: 50,
+                                height: 16
+                            )
+                        }
                     }
                 }
             }
@@ -265,7 +291,7 @@ struct DetailedStatusView: View {
             Divider()
             
             // Tips Section
-            if !tips.isEmpty {
+            if showTips && !tips.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("Tips", systemImage: "lightbulb.fill")
                         .font(.caption)

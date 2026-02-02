@@ -75,8 +75,38 @@ struct SettingsView: View {
                 
                 Toggle("Show Direction Arrows", isOn: $showArrows)
             }
-            
-            Section("Format") {
+                        Section("Display Sections") {
+                    Toggle("Traffic", isOn: Binding(
+                        get: { UserDefaults.standard.object(forKey: "showTraffic") as? Bool ?? true },
+                        set: { UserDefaults.standard.set($0, forKey: "showTraffic") }
+                    ))
+                    Toggle("Connection", isOn: Binding(
+                        get: { UserDefaults.standard.object(forKey: "showConnection") as? Bool ?? true },
+                        set: { UserDefaults.standard.set($0, forKey: "showConnection") }
+                    ))
+                    Toggle("Router", isOn: Binding(
+                        get: { UserDefaults.standard.object(forKey: "showRouter") as? Bool ?? true },
+                        set: { UserDefaults.standard.set($0, forKey: "showRouter") }
+                    ))
+                    Toggle("DNS", isOn: Binding(
+                        get: { UserDefaults.standard.object(forKey: "showDNS") as? Bool ?? true },
+                        set: { UserDefaults.standard.set($0, forKey: "showDNS") }
+                    ))
+                    Toggle("Internet", isOn: Binding(
+                        get: { UserDefaults.standard.object(forKey: "showInternet") as? Bool ?? true },
+                        set: { UserDefaults.standard.set($0, forKey: "showInternet") }
+                    ))
+                    Toggle("Smart Tips", isOn: Binding(
+                        get: { UserDefaults.standard.object(forKey: "showTips") as? Bool ?? true },
+                        set: { UserDefaults.standard.set($0, forKey: "showTips") }
+                    ))
+                    Toggle("Traffic Header Text", isOn: Binding(
+                        get: { UserDefaults.standard.object(forKey: "showTrafficHeader") as? Bool ?? false },
+                        set: { UserDefaults.standard.set($0, forKey: "showTrafficHeader") }
+                    ))
+                }
+                
+                Section("General") {
                 Picker("Unit Type", selection: $unitType) {
                     Text("Bytes (MB/s)").tag(UnitType.bytes)
                     Text("Bits (Mbps)").tag(UnitType.bits)
