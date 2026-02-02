@@ -22,9 +22,12 @@ Net Bar provides real-time network monitoring directly in your menu bar. It allo
 ## Screenshots
 
 <p align="center">
-  <img src="Screenshots/sc-1.png" alt="Net Bar Preview 1" width="32%" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-  <img src="Screenshots/sc-2.png" alt="Net Bar Preview 2" width="32%" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-  <img src="Screenshots/sc-3.png" alt="Net Bar Preview 3" width="32%" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+  <img src="Screenshots/sc-3.png" alt="Net Bar Dashboard" width="80%" style="border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 20px;">
+</p>
+
+<p align="center">
+  <img src="Screenshots/sc-2.png" alt="Net Bar Settings" width="45%" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 10px;">
+  <img src="Screenshots/sc-1.png" alt="Net Bar Menu" width="45%" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
 </p>
 
 ## Features
