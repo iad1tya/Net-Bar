@@ -14,6 +14,7 @@ struct SystemStats {
     var isCharging: Bool = false
     var timeRemaining: Int = -1 // Minutes, -1 if unknown
     var thermalPressure: String = "Normal"
+    var cpuTemperature: Double = 0.0 // Estimated temperature in Celsius
     var physicalCores: Int = ProcessInfo.processInfo.processorCount
     var activeCores: Int = ProcessInfo.processInfo.activeProcessorCount
 }
@@ -202,27 +203,34 @@ class SystemStatsService: ObservableObject {
          let state = ProcessInfo.processInfo.thermalState
          var stateString = "Normal"
          var stateValue = 0.0
+         var estimatedTemp = 45.0 // Base temperature in Celsius
          
          switch state {
          case .nominal:
              stateString = "Normal"
              stateValue = 0.0
+             estimatedTemp = 45.0 + (stats.cpuUsage * 0.15) // 45-60°C range
          case .fair:
              stateString = "Fair"
              stateValue = 33.0
+             estimatedTemp = 60.0 + (stats.cpuUsage * 0.15) // 60-75°C range
          case .serious:
              stateString = "Serious"
              stateValue = 66.0
+             estimatedTemp = 75.0 + (stats.cpuUsage * 0.15) // 75-90°C range
          case .critical:
              stateString = "Critical"
              stateValue = 100.0
+             estimatedTemp = 90.0 + (stats.cpuUsage * 0.10) // 90-100°C range
          @unknown default:
              stateString = "Unknown"
              stateValue = 0.0
+             estimatedTemp = 50.0
          }
         
          DispatchQueue.main.async {
              self.stats.thermalPressure = stateString
+             self.stats.cpuTemperature = estimatedTemp
              self.updateHistory(&self.thermalHistory, newValue: stateValue)
          }
     }

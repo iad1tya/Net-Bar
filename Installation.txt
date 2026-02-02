@@ -1,0 +1,25 @@
+Net Bar Installation Guide
+==========================
+
+Thank you for downloading Net Bar!
+
+Installation Steps:
+1. Drag "NetBar.app" to the "Applications" folder alias in this window.
+2. Launch Net Bar from your Applications folder.
+
+Troubleshooting "App is damaged" or "Cannot be opened":
+------------------------------------------------------
+Because this app is open-source and not signed with a paid Apple Developer Account ($99/year), macOS Gatekeeper may block it from running.
+
+This software is completely safe and open source. It does not track you or collect any personal data.
+
+If you see an error preventing the app from opening, follow these steps:
+
+1. Open the "Terminal" app (Cmd+Space, type "Terminal").
+2. Copy and paste the following command, then press Enter:
+
+   xattr -rd com.apple.quarantine /Applications/NetBar.app
+
+3. That's it! You can now launch Net Bar typically to grant it permission.
+
+Enjoy!

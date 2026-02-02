@@ -347,6 +347,13 @@ struct DetailedStatusView: View {
                                   .foregroundStyle(systemStatsService.stats.thermalPressure == "Normal" ? .green : .red)
                          }
                      }
+                     GridRow(alignment: .center) {
+                         Text("Temperature").foregroundStyle(.secondary)
+                         Text(String(format: "~%.0f°C", systemStatsService.stats.cpuTemperature))
+                             .foregroundStyle(systemStatsService.stats.cpuTemperature > 80 ? .red : .orange)
+                             .monospacedDigit()
+                         Spacer()
+                     }
                  }
             }
         default:
