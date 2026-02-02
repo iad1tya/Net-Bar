@@ -5,6 +5,7 @@ struct DetailedStatusView: View {
     @StateObject private var statsService = NetworkStatsService()
     @ObservedObject private var systemStatsService = SystemStatsService.shared
     @EnvironmentObject var menuBarState: MenuBarState
+    @EnvironmentObject var orderManager: OrderManager
     @Environment(\.openWindow) var openWindow
     
     @State private var uptimeString: String = "00:00:00"
@@ -65,366 +66,9 @@ struct DetailedStatusView: View {
             } 
             
             // Traffic Section
-            if showTraffic {
-                VStack(alignment: .leading) {
-                    if showTrafficHeader {
-                        Text("Traffic")
-                            .font(.caption)
-                            .fontWeight(.bold)
-                            .foregroundStyle(.secondary)
-                    }
-                    
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                        GridRow(alignment: .center) {
-                            Text("Download")
-                                .foregroundStyle(.secondary)
-                            Text(menuBarState.formatBytes(menuBarState.totalDownload).0 + " " + menuBarState.formatBytes(menuBarState.totalDownload).1)
-                                .foregroundStyle(.green)
-                                .monospacedDigit()
-                            StatGraphView(
-                                data: menuBarState.downloadHistory,
-                                color: .green,
-                                minRange: 0, maxRange: 1024 * 1024,
-                                height: 16
-                            )
-                        }
-                        GridRow(alignment: .center) {
-                            Text("Upload")
-                                .foregroundStyle(.secondary)
-                            Text(menuBarState.formatBytes(menuBarState.totalUpload).0 + " " + menuBarState.formatBytes(menuBarState.totalUpload).1)
-                                .foregroundStyle(.blue)
-                                .monospacedDigit()
-                            StatGraphView(
-                                data: menuBarState.uploadHistory,
-                                color: .blue,
-                                minRange: 0, maxRange: 1024 * 1024,
-                                height: 16
-                            )
-                        }
-                        GridRow(alignment: .center) {
-                             Text("Total")
-                                .foregroundStyle(.secondary)
-                             Text(menuBarState.formatBytes(menuBarState.totalDownload + menuBarState.totalUpload).0 + " " + menuBarState.formatBytes(menuBarState.totalDownload + menuBarState.totalUpload).1)
-                                 .foregroundStyle(.purple)
-                                 .monospacedDigit()
-                             StatGraphView(
-                                 data: menuBarState.totalTrafficHistory,
-                                 color: .purple,
-                                 minRange: 0, maxRange: 1024 * 1024 * 2,
-                                 height: 16
-                             )
-                         }
-                    }
-                }
-            }
-
-            if showConnection {
-                // Divider only if previous sections (like Traffic) might be visible, or just always show divider if section is visible (simplest)
-                if showTraffic { Divider() }
-                
-                // Connection Section
-                VStack(alignment: .leading) {
-                    Text("Connection")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.secondary)
-                        
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                        GridRow(alignment: .center) {
-                            Text("Link Rate")
-                                .foregroundStyle(.secondary)
-                            Text("\(Int(statsService.stats.txRate)) Mbps")
-                                .foregroundStyle(.green)
-                                .monospacedDigit()
-                            StatGraphView(
-                                data: Array(repeating: statsService.stats.txRate, count: 20),
-                                color: .green,
-                                minRange: 0, maxRange: 1000,
-                                height: 16
-                            )
-                        }
-                        
-                        GridRow(alignment: .center) {
-                            Text("Signal")
-                                .foregroundStyle(.secondary)
-                            Text("\(statsService.stats.rssi) dBm")
-                                .foregroundStyle(.orange)
-                                .monospacedDigit()
-                            StatGraphView(
-                                data: statsService.signalHistory.map { Double($0) },
-                                color: .orange,
-                                minRange: -100, maxRange: -30,
-                                height: 16
-                            )
-                        }
-                        
-                        GridRow(alignment: .center) {
-                            Text("Noise")
-                                .foregroundStyle(.secondary)
-                            Text("\(statsService.stats.noise) dBm")
-                                .foregroundStyle(.green)
-                                .monospacedDigit()
-                            StatGraphView(
-                                data: statsService.noiseHistory.map { Double($0) },
-                                color: .green,
-                                minRange: -110, maxRange: -80,
-                                height: 16
-                            )
-                        }
-                    }
-                }
-            }
-            
-            if showRouter {
-                if showTraffic || showConnection { Divider() }
-                
-                // Router Section
-                VStack(alignment: .leading) {
-                    Text("Router")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.secondary)
-                    
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                        GridRow(alignment: .center) {
-                            Text("Ping")
-                                .foregroundStyle(.secondary)
-                            Text(String(format: "%.0f ms", statsService.stats.routerPing))
-                                .foregroundStyle(.green)
-                                .monospacedDigit()
-                            StatGraphView(
-                                data: statsService.routerPingHistory,
-                                color: .green,
-                                minRange: 0, maxRange: 100,
-                                height: 16
-                            )
-                        }
-                        
-                        GridRow(alignment: .center) {
-                            Text("Jitter")
-                                .foregroundStyle(.secondary)
-                            Text(String(format: "%.1f ms", statsService.stats.routerJitter))
-                                .foregroundStyle(.yellow)
-                                .monospacedDigit()
-                             StatGraphView(
-                                data: statsService.routerPingHistory.map { abs($0 - statsService.stats.routerPing) },
-                                color: .yellow,
-                                minRange: 0, maxRange: 50,
-                                height: 16
-                            )
-                        }
-                        
-                        GridRow(alignment: .center) {
-                            Text("Loss")
-                                .foregroundStyle(.secondary)
-                            Text(String(format: "%.0f%%", statsService.stats.routerLoss))
-                                .foregroundStyle(.yellow)
-                                .monospacedDigit()
-                            Rectangle().fill(Color.orange).frame(height: 2)
-                        }
-                    }
-                }
-            }
-
-            if showDNS {
-                if showTraffic || showConnection || showRouter { Divider() }
-                
-                // DNS Section
-                VStack(alignment: .leading) {
-                    Text("DNS Router Assigned")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.secondary)
-                    
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                         GridRow(alignment: .center) {
-                             Text(statsService.stats.dns.isEmpty ? "Unknown" : statsService.stats.dns)
-                                 .foregroundStyle(.secondary)
-                             Text(String(format: "%.0f ms", statsService.stats.dnsPing))
-                                 .foregroundStyle(.cyan)
-                                 .monospacedDigit()
-                             StatGraphView(
-                                 data: statsService.dnsPingHistory,
-                                 color: .cyan,
-                                 minRange: 0, maxRange: 100,
-                                 height: 16
-                             )
-                         }
-                    }
-                }
-            }
-            
-            if showInternet {
-                if showTraffic || showConnection || showRouter || showDNS { Divider() }
-                
-                // Internet Section
-                VStack(alignment: .leading) {
-                    Text("Internet - 1.1.1.1")
-                        .font(.caption)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.secondary)
-                        
-                     Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                        GridRow(alignment: .center) {
-                            Text("Ping")
-                                .foregroundStyle(.secondary)
-                            Text(String(format: "%.0f ms", statsService.stats.ping))
-                                .foregroundStyle(.yellow)
-                                .monospacedDigit()
-                            StatGraphView(
-                                data: statsService.pingHistory,
-                                color: .yellow,
-                                minRange: 0, maxRange: 200,
-                                height: 16
-                            )
-                        }
-                        
-                        GridRow(alignment: .center) {
-                            Text("Jitter")
-                                .foregroundStyle(.secondary)
-                            Text(String(format: "%.1f ms", statsService.stats.jitter))
-                                 .foregroundStyle(.red)
-                                .monospacedDigit()
-                             StatGraphView(
-                                data: statsService.pingHistory.map { abs($0 - statsService.stats.ping) },
-                                color: .red,
-                                minRange: 0, maxRange: 50,
-                                height: 16
-                            )
-                        }
-                    }
-                }
-            }
-            
-            if showCPU {
-                 if showTraffic || showConnection || showRouter || showDNS || showInternet { Divider() }
-                 VStack(alignment: .leading) {
-                     Text("Processor")
-                         .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
-                     Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                         GridRow(alignment: .center) {
-                             Text("Usage")
-                                 .foregroundStyle(.secondary)
-                             Text(String(format: "%.1f%%", systemStatsService.stats.cpuUsage))
-                                 .foregroundStyle(systemStatsService.stats.cpuUsage > 80 ? .red : .primary)
-                                 .monospacedDigit()
-                         }
-                         GridRow(alignment: .center) {
-                             Text("Cores")
-                                 .foregroundStyle(.secondary)
-                             Text("\(systemStatsService.stats.physicalCores) Physical / \(systemStatsService.stats.activeCores) Active")
-                                 .foregroundStyle(.secondary)
-                                 .font(.body) // Was caption
-                             Spacer()
-                         }
-                     }
-                 }
-            }
-            
-            if showMemory {
-                if showTraffic || showConnection || showRouter || showDNS || showInternet || showCPU { Divider() }
-                VStack(alignment: .leading) {
-                    Text("Memory")
-                        .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                        GridRow(alignment: .center) {
-                            Text("Usage")
-                                 .foregroundStyle(.secondary)
-                            Text(String(format: "%.1f%%", systemStatsService.stats.memoryUsage))
-                                .foregroundStyle(systemStatsService.stats.memoryUsage > 80 ? .red : .primary)
-                                .monospacedDigit()
-                        }
-                         GridRow(alignment: .center) {
-                            Text("Used")
-                                .foregroundStyle(.secondary)
-                            Text(String(format: "%.2f GB", systemStatsService.stats.memoryUsed))
-                                .foregroundStyle(.secondary)
-                                .monospacedDigit()
-                             Text(String(format: "/ %.0f GB", systemStatsService.stats.memoryTotal))
-                                 .foregroundStyle(.secondary)
-                                 .font(.body) // Was callout
-                        }
-                    }
-                }
-            }
-
-            if showDisk {
-                if showTraffic || showConnection || showRouter || showDNS || showInternet || showCPU || showMemory { Divider() }
-                 VStack(alignment: .leading) {
-                    Text("Disk")
-                        .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
-                    Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                        GridRow(alignment: .center) {
-                            Text("Usage")
-                                .foregroundStyle(.secondary)
-                            Text(String(format: "%.1f%%", systemStatsService.stats.diskUsage))
-                                .foregroundStyle(systemStatsService.stats.diskUsage > 90 ? .red : .primary)
-                                .monospacedDigit()
-                        }
-                         GridRow(alignment: .center) {
-                            Text("Free")
-                                .foregroundStyle(.secondary)
-                            Text(String(format: "%.0f GB", systemStatsService.stats.diskFree))
-                                .foregroundStyle(.secondary)
-                                .monospacedDigit()
-                             Spacer()
-                        }
-                    }
-                }
-            }
-            
-            if showEnergy {
-                 if showTraffic || showConnection || showRouter || showDNS || showInternet || showCPU || showMemory || showDisk { Divider() }
-                 VStack(alignment: .leading) {
-                    Text("Battery")
-                        .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
-                     
-                     Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                         GridRow(alignment: .center) {
-                             Text("Level")
-                                 .foregroundStyle(.secondary)
-                             
-                             HStack(spacing: 4) {
-                                 Image(systemName: systemStatsService.stats.isCharging ? "bolt.fill" : "battery.100")
-                                    .foregroundStyle(systemStatsService.stats.isCharging ? .yellow : .green)
-                                 Text(String(format: "%.0f%%", systemStatsService.stats.batteryLevel))
-                                      .monospacedDigit()
-                             }
-                         }
-                         
-                         if systemStatsService.stats.timeRemaining > 0 {
-                             GridRow(alignment: .center) {
-                                  Text("Time")
-                                      .foregroundStyle(.secondary)
-                                  Text("\(systemStatsService.stats.timeRemaining) min")
-                                      .foregroundStyle(.secondary)
-                                      .monospacedDigit()
-                                  Spacer()
-                             }
-                         }
-                     }
-                }
-            }
-            
-            if showTemp {
-                 if showTraffic || showConnection || showRouter || showDNS || showInternet || showCPU || showMemory || showDisk || showEnergy { Divider() }
-                 VStack(alignment: .leading) {
-                    Text("Thermal State")
-                        .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
-                     
-                     Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
-                         GridRow(alignment: .center) {
-                             Text("State")
-                                 .foregroundStyle(.secondary)
-                             
-                             HStack(spacing: 4) {
-                                  Image(systemName: "thermometer")
-                                 Text(systemStatsService.stats.thermalPressure)
-                                      .foregroundStyle(systemStatsService.stats.thermalPressure == "Normal" ? .green : .red)
-                             }
-                         }
-                     }
-                }
+            ForEach(Array(visibleSections.enumerated()), id: \.element) { index, section in
+                if index > 0 { Divider() }
+                sectionView(for: section)
             }
             
             Divider()
@@ -480,23 +124,235 @@ struct DetailedStatusView: View {
     var tips: [String] {
         var list: [String] = []
         let s = statsService.stats
+        let sys = systemStatsService.stats
         
-        if s.rssi < -75 && s.rssi != 0 {
-            list.append("Weak Wi-Fi signal. Move closer to your router.")
+        if showConnection {
+            if s.rssi < -75 && s.rssi != 0 { list.append("Weak Wi-Fi signal. Move closer to your router.") }
+            if s.txRate < 50 && s.txRate > 0 { list.append("Low link rate. Wi-Fi might be slow.") }
+            if s.noise > -85 && s.noise != 0 { list.append("High interference (Noise). Try changing Wi-Fi channel.") }
         }
-        if s.txRate < 50 && s.txRate > 0 {
-            list.append("Low link rate. Wi-Fi might be slow.")
+        
+        if showRouter {
+            if s.routerLoss > 1.0 { list.append("Packet loss detected to router. Connection unstable.") }
+            if s.routerJitter > 50 { list.append("High jitter detected. Calls may be choppy.") }
         }
-        if s.noise > -85 && s.noise != 0 {
-            list.append("High interference (Noise). Try changing Wi-Fi channel.")
-        }
-        if s.routerLoss > 1.0 {
-            list.append("Packet loss detected to router. Connection unstable.")
-        }
-        if s.routerJitter > 50 {
-            list.append("High jitter detected. Calls may be choppy.")
-        }
+        
+        // Misc Tips (System)
+        if showCPU && sys.cpuUsage > 90 { list.append("High CPU usage detected.") }
+        if showMemory && sys.memoryUsage > 90 { list.append("Memory usage is critical.") }
+        if showDisk && sys.diskUsage > 90 { list.append("Low disk space.") }
+        if showTemp && sys.thermalPressure != "Normal" { list.append("Device is running hot (\(sys.thermalPressure)).") }
+        if showEnergy && sys.batteryLevel < 20 && !sys.isCharging { list.append("Battery is low.") }
         
         return list
+    }
+    
+    var visibleSections: [String] {
+        orderManager.sectionOrder.filter { section in
+            switch section {
+            case "Traffic": return showTraffic
+            case "Connection": return showConnection
+            case "Router": return showRouter
+            case "DNS": return showDNS
+            case "Internet": return showInternet
+            case "Processor": return showCPU
+            case "Memory": return showMemory
+            case "Disk": return showDisk
+            case "Battery": return showEnergy
+            case "Thermal State": return showTemp
+            default: return false
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func sectionView(for section: String) -> some View {
+        switch section {
+        case "Traffic":
+            VStack(alignment: .leading, spacing: 12) {
+                 if showTrafficHeader {
+                     Text("Traffic")
+                         .font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                 }
+                 Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                     GridRow(alignment: .center) {
+                         Text("Download").foregroundStyle(.secondary)
+                         Text(menuBarState.formatBytes(menuBarState.totalDownload).0 + " " + menuBarState.formatBytes(menuBarState.totalDownload).1)
+                             .foregroundStyle(.green).monospacedDigit()
+                         StatGraphView(data: menuBarState.downloadHistory, color: .green, minRange: 0, maxRange: 1024 * 1024, height: 16)
+                     }
+                     GridRow(alignment: .center) {
+                         Text("Upload").foregroundStyle(.secondary)
+                         Text(menuBarState.formatBytes(menuBarState.totalUpload).0 + " " + menuBarState.formatBytes(menuBarState.totalUpload).1)
+                             .foregroundStyle(.blue).monospacedDigit()
+                         StatGraphView(data: menuBarState.uploadHistory, color: .blue, minRange: 0, maxRange: 1024 * 1024, height: 16)
+                     }
+                     GridRow(alignment: .center) {
+                          Text("Total").foregroundStyle(.secondary)
+                          Text(menuBarState.formatBytes(menuBarState.totalDownload + menuBarState.totalUpload).0 + " " + menuBarState.formatBytes(menuBarState.totalDownload + menuBarState.totalUpload).1)
+                              .foregroundStyle(.purple).monospacedDigit()
+                          StatGraphView(data: menuBarState.totalTrafficHistory, color: .purple, minRange: 0, maxRange: 1024 * 1024 * 2, height: 16)
+                      }
+                 }
+            }
+        case "Connection":
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Connection").font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                    GridRow(alignment: .center) {
+                        Text("Link Rate").foregroundStyle(.secondary)
+                        Text("\(Int(statsService.stats.txRate)) Mbps").foregroundStyle(.green).monospacedDigit()
+                        StatGraphView(data: Array(repeating: statsService.stats.txRate, count: 20), color: .green, minRange: 0, maxRange: 1000, height: 16)
+                    }
+                    GridRow(alignment: .center) {
+                        Text("Signal").foregroundStyle(.secondary)
+                        Text("\(statsService.stats.rssi) dBm").foregroundStyle(.orange).monospacedDigit()
+                        StatGraphView(data: statsService.signalHistory.map { Double($0) }, color: .orange, minRange: -100, maxRange: -30, height: 16)
+                    }
+                    GridRow(alignment: .center) {
+                        Text("Noise").foregroundStyle(.secondary)
+                        Text("\(statsService.stats.noise) dBm").foregroundStyle(.green).monospacedDigit()
+                        StatGraphView(data: statsService.noiseHistory.map { Double($0) }, color: .green, minRange: -110, maxRange: -80, height: 16)
+                    }
+                }
+            }
+        case "Router":
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Router").font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                    GridRow(alignment: .center) {
+                        Text("Ping").foregroundStyle(.secondary)
+                        Text(String(format: "%.0f ms", statsService.stats.routerPing)).foregroundStyle(.green).monospacedDigit()
+                        StatGraphView(data: statsService.routerPingHistory, color: .green, minRange: 0, maxRange: 100, height: 16)
+                    }
+                    GridRow(alignment: .center) {
+                        Text("Jitter").foregroundStyle(.secondary)
+                        Text(String(format: "%.1f ms", statsService.stats.routerJitter)).foregroundStyle(.yellow).monospacedDigit()
+                         StatGraphView(data: statsService.routerPingHistory.map { abs($0 - statsService.stats.routerPing) }, color: .yellow, minRange: 0, maxRange: 50, height: 16)
+                    }
+                    GridRow(alignment: .center) {
+                        Text("Loss").foregroundStyle(.secondary)
+                        Text(String(format: "%.0f%%", statsService.stats.routerLoss)).foregroundStyle(.yellow).monospacedDigit()
+                        Rectangle().fill(Color.orange).frame(height: 2)
+                    }
+                }
+            }
+        case "DNS":
+            VStack(alignment: .leading, spacing: 12) {
+                Text("DNS Router Assigned").font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                     GridRow(alignment: .center) {
+                         Text(statsService.stats.dns.isEmpty ? "Unknown" : statsService.stats.dns).foregroundStyle(.secondary)
+                         Text(String(format: "%.0f ms", statsService.stats.dnsPing)).foregroundStyle(.cyan).monospacedDigit()
+                         StatGraphView(data: statsService.dnsPingHistory, color: .cyan, minRange: 0, maxRange: 100, height: 16)
+                     }
+                }
+            }
+        case "Internet":
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Internet - 1.1.1.1").font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                 Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                    GridRow(alignment: .center) {
+                        Text("Ping").foregroundStyle(.secondary)
+                        Text(String(format: "%.0f ms", statsService.stats.ping)).foregroundStyle(.yellow).monospacedDigit()
+                        StatGraphView(data: statsService.pingHistory, color: .yellow, minRange: 0, maxRange: 200, height: 16)
+                    }
+                    GridRow(alignment: .center) {
+                        Text("Jitter").foregroundStyle(.secondary)
+                        Text(String(format: "%.1f ms", statsService.stats.jitter)).foregroundStyle(.red).monospacedDigit()
+                         StatGraphView(data: statsService.pingHistory.map { abs($0 - statsService.stats.ping) }, color: .red, minRange: 0, maxRange: 50, height: 16)
+                    }
+                }
+            }
+        case "Processor":
+             VStack(alignment: .leading, spacing: 12) {
+                 Text("Processor").font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                 Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                     GridRow(alignment: .center) {
+                         Text("Usage").foregroundStyle(.secondary)
+                         Text(String(format: "%.1f%%", systemStatsService.stats.cpuUsage))
+                             .foregroundStyle(systemStatsService.stats.cpuUsage > 80 ? .red : .primary).monospacedDigit()
+                     }
+                     GridRow(alignment: .center) {
+                         Text("Cores").foregroundStyle(.secondary)
+                         Text("\(systemStatsService.stats.physicalCores) Physical / \(systemStatsService.stats.activeCores) Active")
+                             .foregroundStyle(.secondary).font(.body)
+                         Spacer()
+                     }
+                 }
+             }
+        case "Memory":
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Memory").font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                    GridRow(alignment: .center) {
+                        Text("Usage").foregroundStyle(.secondary)
+                        Text(String(format: "%.1f%%", systemStatsService.stats.memoryUsage))
+                            .foregroundStyle(systemStatsService.stats.memoryUsage > 80 ? .red : .primary).monospacedDigit()
+                    }
+                     GridRow(alignment: .center) {
+                        Text("Used").foregroundStyle(.secondary)
+                        Text(String(format: "%.2f GB", systemStatsService.stats.memoryUsed))
+                            .foregroundStyle(.secondary).monospacedDigit()
+                         Text(String(format: "/ %.0f GB", systemStatsService.stats.memoryTotal))
+                             .foregroundStyle(.secondary).font(.body)
+                    }
+                }
+            }
+        case "Disk":
+             VStack(alignment: .leading, spacing: 12) {
+                Text("Disk").font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                    GridRow(alignment: .center) {
+                        Text("Usage").foregroundStyle(.secondary)
+                        Text(String(format: "%.1f%%", systemStatsService.stats.diskUsage))
+                            .foregroundStyle(systemStatsService.stats.diskUsage > 90 ? .red : .primary).monospacedDigit()
+                    }
+                     GridRow(alignment: .center) {
+                        Text("Free").foregroundStyle(.secondary)
+                        Text(String(format: "%.0f GB", systemStatsService.stats.diskFree))
+                            .foregroundStyle(.secondary).monospacedDigit()
+                         Spacer()
+                    }
+                }
+            }
+        case "Battery":
+             VStack(alignment: .leading, spacing: 12) {
+                Text("Battery").font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                 Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                     GridRow(alignment: .center) {
+                         Text("Level").foregroundStyle(.secondary)
+                         HStack(spacing: 4) {
+                             Image(systemName: systemStatsService.stats.isCharging ? "bolt.fill" : "battery.100")
+                                .foregroundStyle(systemStatsService.stats.isCharging ? .yellow : .green)
+                             Text(String(format: "%.0f%%", systemStatsService.stats.batteryLevel)).monospacedDigit()
+                         }
+                     }
+                     if systemStatsService.stats.timeRemaining > 0 {
+                         GridRow(alignment: .center) {
+                              Text("Time").foregroundStyle(.secondary)
+                              Text("\(systemStatsService.stats.timeRemaining) min").foregroundStyle(.secondary).monospacedDigit()
+                              Spacer()
+                         }
+                     }
+                 }
+            }
+        case "Thermal State":
+             VStack(alignment: .leading, spacing: 12) {
+                Text("Thermal State").font(.caption).fontWeight(.bold).foregroundStyle(.secondary)
+                 Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 12) {
+                     GridRow(alignment: .center) {
+                         Text("State").foregroundStyle(.secondary)
+                         HStack(spacing: 4) {
+                              Image(systemName: "thermometer")
+                             Text(systemStatsService.stats.thermalPressure)
+                                  .foregroundStyle(systemStatsService.stats.thermalPressure == "Normal" ? .green : .red)
+                         }
+                     }
+                 }
+            }
+        default:
+             EmptyView()
+        }
     }
 }

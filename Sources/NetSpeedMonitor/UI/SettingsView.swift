@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @AppStorage("displayMode") private var displayMode: DisplayMode = .both
@@ -8,14 +9,33 @@ struct SettingsView: View {
     @AppStorage("fontSize") private var fontSize: Double = 9.0
     @AppStorage("textSpacing") private var textSpacing: Double = 0.0
     @AppStorage("characterSpacing") private var characterSpacing: Double = 0.0
+    
+    // Visibility Toggles
+    @AppStorage("showTraffic") private var showTraffic: Bool = true
+    @AppStorage("showConnection") private var showConnection: Bool = true
+    @AppStorage("showRouter") private var showRouter: Bool = true
+    @AppStorage("showDNS") private var showDNS: Bool = true
+    @AppStorage("showInternet") private var showInternet: Bool = true
+    @AppStorage("showTips") private var showTips: Bool = true
+    @AppStorage("showTrafficHeader") private var showTrafficHeader: Bool = false
+    
+    // Misc Toggles
+    @AppStorage("showCPU") private var showCPU: Bool = false
+    @AppStorage("showMemory") private var showMemory: Bool = false
+    @AppStorage("showDisk") private var showDisk: Bool = false
+    @AppStorage("showEnergy") private var showEnergy: Bool = false
+    @AppStorage("showTemp") private var showTemp: Bool = false
 
 
     
     @EnvironmentObject var menuBarState: MenuBarState
+    @EnvironmentObject var orderManager: OrderManager
     
     @State private var updateAvailable: Bool = false
     @State private var latestVersionURL: URL?
     @State private var isChecking: Bool = false
+    @State private var draggingItem: String?
+    @State private var changedView: Bool = false
 
     var body: some View {
         Form {
@@ -76,67 +96,56 @@ struct SettingsView: View {
                 Toggle("Show Direction Arrows", isOn: $showArrows)
             }
                         Section("Display Sections") {
-                    Toggle("Traffic", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showTraffic") as? Bool ?? true },
-                        set: { UserDefaults.standard.set($0, forKey: "showTraffic") }
-                    ))
-                    Toggle("Connection", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showConnection") as? Bool ?? true },
-                        set: { UserDefaults.standard.set($0, forKey: "showConnection") }
-                    ))
-                    Toggle("Router", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showRouter") as? Bool ?? true },
-                        set: { UserDefaults.standard.set($0, forKey: "showRouter") }
-                    ))
-                    Toggle("DNS", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showDNS") as? Bool ?? true },
-                        set: { UserDefaults.standard.set($0, forKey: "showDNS") }
-                    ))
-                    Toggle("Internet", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showInternet") as? Bool ?? true },
-                        set: { UserDefaults.standard.set($0, forKey: "showInternet") }
-                    ))
-                    Toggle("Smart Tips", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showTips") as? Bool ?? true },
-                        set: { UserDefaults.standard.set($0, forKey: "showTips") }
-                    ))
-                    Toggle("Traffic Header Text", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showTrafficHeader") as? Bool ?? false },
-                        set: { UserDefaults.standard.set($0, forKey: "showTrafficHeader") }
-                    ))
+                    Toggle("Traffic", isOn: $showTraffic)
+                    Toggle("Connection", isOn: $showConnection)
+                    Toggle("Router", isOn: $showRouter)
+                    Toggle("DNS", isOn: $showDNS)
+                    Toggle("Internet", isOn: $showInternet)
+                    Toggle("Smart Tips", isOn: $showTips)
+                    Toggle("Traffic Header Text", isOn: $showTrafficHeader)
+                }
+                
+                Section("Section Order") {
+                    ForEach(orderManager.sectionOrder.filter { isSectionEnabled($0) }, id: \.self) { item in
+                        HStack {
+                            Image(systemName: "line.3.horizontal")
+                                .foregroundStyle(.secondary)
+                            Text(item)
+                            Spacer()
+                        }
+                        .padding(.vertical, 4)
+                        .background(Color.clear) // Tappable area
+                        .contentShape(Rectangle())
+                        .onDrag {
+                            draggingItem = item
+                            return NSItemProvider(object: item as NSString)
+                        }
+                        .onDrop(of: [.text], delegate: DropRelocateDelegate(item: item, listData: $orderManager.sectionOrder, current: $draggingItem, changedView: $changedView))
+                    }
+                    
+                    Button("Reset Order") {
+                        orderManager.reset()
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.red)
                 }
                 
                 Section("Misc (System Stats)") {
-                    Toggle("CPU Usage", isOn: Binding(
-                         get: { UserDefaults.standard.object(forKey: "showCPU") as? Bool ?? false },
-                         set: { UserDefaults.standard.set($0, forKey: "showCPU") }
-                    ))
+                    Toggle("CPU Usage", isOn: $showCPU)
                     Toggle("Show CPU Usage in Menu Bar", isOn: $menuBarState.showCPUMenu)
-                        .disabled(!(UserDefaults.standard.object(forKey: "showCPU") as? Bool ?? false))
+                        .disabled(!showCPU)
                     
-                    Toggle("Memory Usage", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showMemory") as? Bool ?? false },
-                        set: { UserDefaults.standard.set($0, forKey: "showMemory") }
-                    ))
+                    Toggle("Memory Usage", isOn: $showMemory)
                     Toggle("Show Memory Usage in Menu Bar", isOn: $menuBarState.showMemoryMenu)
-                        .disabled(!(UserDefaults.standard.object(forKey: "showMemory") as? Bool ?? false))
+                        .disabled(!showMemory)
                     
-                    Toggle("Disk Usage", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showDisk") as? Bool ?? false },
-                        set: { UserDefaults.standard.set($0, forKey: "showDisk") }
-                    ))
+                    Toggle("Disk Usage", isOn: $showDisk)
                     Toggle("Show Disk Usage in Menu Bar", isOn: $menuBarState.showDiskMenu)
-                        .disabled(!(UserDefaults.standard.object(forKey: "showDisk") as? Bool ?? false))
+                        .disabled(!showDisk)
                     
-                    Toggle("Energy / Battery", isOn: Binding(
-                        get: { UserDefaults.standard.object(forKey: "showEnergy") as? Bool ?? false },
-                        set: { UserDefaults.standard.set($0, forKey: "showEnergy") }
-                    ))
+                    Toggle("Energy / Battery", isOn: $showEnergy)
                     
-                    Toggle("Temperature", isOn: Binding(
-                         get: { UserDefaults.standard.object(forKey: "showTemp") as? Bool ?? false },
-                         set: { UserDefaults.standard.set($0, forKey: "showTemp") }
-                     ))
+                    Toggle("Temperature", isOn: $showTemp)
                 }
                 
                 Section("General") {
@@ -210,6 +219,22 @@ struct SettingsView: View {
         }
     }
     
+    func isSectionEnabled(_ section: String) -> Bool {
+        switch section {
+        case "Traffic": return showTraffic
+        case "Connection": return showConnection
+        case "Router": return showRouter
+        case "DNS": return showDNS
+        case "Internet": return showInternet
+        case "Processor": return showCPU
+        case "Memory": return showMemory
+        case "Disk": return showDisk
+        case "Battery": return showEnergy
+        case "Thermal State": return showTemp
+        default: return true
+        }
+    }
+    
     func checkForUpdates() {
         isChecking = true
         guard let url = URL(string: "https://api.github.com/repos/iad1tya/Net-Bar/releases/latest") else {
@@ -263,4 +288,32 @@ enum UnitType: String, CaseIterable, Identifiable {
 enum FixedUnit: String, CaseIterable, Identifiable {
     case auto, kb, mb
     var id: Self { self }
+}
+
+struct DropRelocateDelegate: DropDelegate {
+    let item: String
+    @Binding var listData: [String]
+    @Binding var current: String?
+    @Binding var changedView: Bool
+
+    func dropEntered(info: DropInfo) {
+        guard let current = current, current != item else { return }
+        guard let from = listData.firstIndex(of: current), let to = listData.firstIndex(of: item) else { return }
+        
+        if listData[to] != current {
+            withAnimation {
+                listData.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+            }
+            changedView.toggle()
+        }
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        return DropProposal(operation: .move)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        self.current = nil
+        return true
+    }
 }
