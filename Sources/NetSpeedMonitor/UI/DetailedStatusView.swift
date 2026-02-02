@@ -33,7 +33,7 @@ struct DetailedStatusView: View {
                 VStack(alignment: .leading) {
                     Text("Net Bar")
                         .font(.headline)
-                    Text("Network Diagnostics")
+                    Text("Not Just Network Diagnostics")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
