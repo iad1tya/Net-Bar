@@ -17,7 +17,7 @@ struct SettingsView: View {
     @AppStorage("showDNS") private var showDNS: Bool = true
     @AppStorage("showInternet") private var showInternet: Bool = true
     @AppStorage("showTips") private var showTips: Bool = true
-    @AppStorage("showTrafficHeader") private var showTrafficHeader: Bool = false
+    @AppStorage("showTrafficHeader") private var showTrafficHeader: Bool = true
     
     // Misc Toggles
     @AppStorage("showCPU") private var showCPU: Bool = false
@@ -160,7 +160,6 @@ struct SettingsView: View {
                 Toggle("DNS", isOn: $showDNS)
                 Toggle("Internet", isOn: $showInternet)
                 Toggle("Smart Tips", isOn: $showTips)
-                Toggle("Traffic Header Text", isOn: $showTrafficHeader)
                 Toggle("CPU Usage", isOn: $showCPU)
                 Toggle("Memory Usage", isOn: $showMemory)
                 Toggle("Disk Usage", isOn: $showDisk)

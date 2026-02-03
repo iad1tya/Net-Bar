@@ -22,5 +22,6 @@ struct NetSpeedMonitorApp: App {
                 .environmentObject(orderManager)
         }
         .windowResizability(.contentSize)
+        .defaultPosition(.center)
     }
 }
