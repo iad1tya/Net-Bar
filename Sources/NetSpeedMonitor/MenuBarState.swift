@@ -37,8 +37,7 @@ class MenuBarState: ObservableObject {
             text: menuText,
             font: .monospacedSystemFont(ofSize: fontSize, weight: .semibold),
             spacing: textSpacing,
-            kern: characterSpacing,
-            maxWidth: unstackNetworkUsage ? 180 : nil
+            kern: characterSpacing
         )
     }
     
