@@ -143,7 +143,6 @@ class MenuBarState: ObservableObject {
                         let (downVal, downUnit) = self.formatSpeed(self.downloadSpeed)
                         let (upVal, upUnit) = self.formatSpeed(self.uploadSpeed)
                         
-                        var text = ""
                         var networkSegments: [String] = []
                         
                         if self.displayMode == .both || self.displayMode == .uploadOnly {
@@ -154,11 +153,7 @@ class MenuBarState: ObservableObject {
                             networkSegments.append("\(self.showArrows ? "↓ " : "")\(downVal) \(downUnit)")
                         }
                         
-                        if self.unstackNetworkUsage {
-                            text = networkSegments.joined(separator: " | ")
-                        } else {
-                            text = networkSegments.joined(separator: "\n")
-                        }
+                        var text = networkSegments.joined(separator: self.unstackNetworkUsage ? " | " : "\n")
                         
                         // System Stats
                         var statsList: [String] = []
