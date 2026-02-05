@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Bar</title>
+    <link rel="stylesheet" href="css/Dashboard.css">
+    <link rel="stylesheet" href="css/Dashboard2.css">
+    <link rel="stylesheet" href="css/status_bar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class = "status-bar">
+        <div class="status-item">
+                    <div class="status-label">NETWORK</div>
+                    <div class="status-value">7.99 Kbps</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">CPU</div>
+                    <div class="status-value">9%</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">RAM</div>
+                    <div class="status-value">64%</div>
+                </div>
+                <div class="status-item">
+                    <div class="status-label">HDD</div>
+                    <div class="status-value">83%</div>
+                </div>
+    </header>
+
+    <div class="dashboard">
+        <div class="network-card">
+            <div class="network-title">Net Bar</div>
+            <div class="network-subtitle">Network Diagnostics</div>
+            
+            <div class="secure-network">
+                <div class="secure-badge">Secure Network</div>
+                <div class="GHz">5 GHz</div>
+            </div>
+
+            <div class="traffic-section">
+                <div class="section-title">Traffic</div>
+                
+                <div class="traffic-item">
+                    <div class="traffic-info">
+                        <div class="traffic-icon download">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="traffic-label">Download</div>
+                    </div>
+                    <div class="traffic-bar-container">
+                        <div class="traffic-bar download"></div>
+                    </div>
+                    <div class="traffic-value">1.44 MB</div>
+                </div>
+
+                <div class="traffic-item">
+                    <div class="traffic-info">
+                        <div class="traffic-icon upload">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <div class="traffic-label">Upload</div>
+                    </div>
+                    <div class="traffic-bar-container">
+                        <div class="traffic-bar upload"></div>
+                    </div>
+                    <div class="traffic-value">4.52 MB</div>
+                </div>
+
+                <div class="traffic-item">
+                    <div class="traffic-info">
+                        <div class="traffic-icon total">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="traffic-label">Total</div>
+                    </div>
+                    <div class="traffic-bar-container">
+                        <div class="traffic-bar total"></div>
+                    </div>
+                    <div class="traffic-value">5.95 MB</div>
+                </div>
+            </div>
+            
+            <div class="connection-section">
+                <div class="section-title">Connection</div>
+                <div class="connection-grid">
+                    <div class="connection-box">
+                        <div class="connection-label">Link Rate</div>
+                        <div class="connection-value">7 Mbps</div>
+                    </div>
+                    <div class="connection-box">
+                        <div class="connection-label">Signal</div>
+                        <div class="connection-value">-80 dBm</div>
+                    </div>
+                    <div class="connection-box">
+                        <div class="connection-label">Noise</div>
+                        <div class="connection-value">-94 dBm</div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+    <div class="system-card">
+            <!-- Processor -->
+            <div class="resource-item">
+                <div class="resource-header">
+                    <div class="resource-name">Processor</div>
+                    <div class="resource-value">Usage 9.8%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill cpu-fill"></div>
+                </div>
+                <div class="resource-detail">Cores 8 Physical / 8 Active</div>
+            </div>
+            
+            <!-- Memory -->
+            <div class="resource-item">
+                <div class="resource-header">
+                    <div class="resource-name">Memory</div>
+                    <div class="resource-value">Usage 64.7%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill ram-fill"></div>
+                </div>
+                <div class="resource-detail">Used 10.35 GB / 16 GB</div>
+            </div>
+            
+            <!-- Disk -->
+            <div class="resource-item">
+                <div class="resource-header">
+                    <div class="resource-name">Disk</div>
+                    <div class="resource-value">Usage 83.8%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill disk-fill"></div>
+                </div>
+                <div class="resource-detail">Free 74 GB</div>
+            </div>
+            
+            <!-- Battery -->
+            <div class="resource-item">
+                <div class="resource-header">
+                    <div class="resource-name">Battery</div>
+                    <div class="resource-value">
+                        <i class="fas fa-bolt flash-icon"></i>Level 74%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill battery-fill"></div>
+                </div>
+            </div>
+            
+            <!-- Thermal State -->
+            <div class="resource-item">
+                <div class="resource-header">
+                    <div class="resource-name">Thermal State</div>
+                </div>
+                <div class="thermal-state">
+                    <i class="fas fa-thermometer-half thermal-icon"></i>
+                    <div class="thermal-badge">Normal</div>
+                </div>
+            </div>
+            
+            <!-- Tips Section -->
+            <div class="tips-section">
+                <div class="tips-title">
+                    <i class="fas fa-lightbulb bulb-icon"></i>Tips
+                </div>
+                <div class="tip">
+                    <span class="warning">•</span>
+                    <span>Weak Wi-Fi signal. Move closer to your router.</span>
+                </div>
+                <div class="tip">
+                    <span class="warning">•</span>
+                    <span>Low link rate. Wi-Fi might be slow.</span>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <script src="Javascript/main.js"></script>
+        
+</body>
+</html>

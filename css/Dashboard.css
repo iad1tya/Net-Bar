@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+body{
+    background-color: #0f172a;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: white;
+    margin: 0;
+    padding: 20px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px; 
+    align-items: start;
+}
+
+.network-card {
+    background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 25px;
+    padding: 35px;
+    border: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+.network-title{
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 2px;
+    background: linear-gradient(90deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+}
+.network-subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: #94a3b8;
+    margin-bottom: 15px;
+}
+
+.secure-network{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(30, 41, 59, 0.8);
+    padding: 15px 20px;
+    border-radius: 15px;
+    border: 1px solid #334155;
+    margin: 10px 0;
+}
+
+.secure-badge{
+    color: white;
+    font-size: 25px;
+    font-weight: bold;
+}
+.GHz{
+    font-size: 16px;
+    color: white;
+    background-color: #475569;
+    border-radius: 7px;
+    padding: 5px 12px;
+    font-weight: 500;
+}
+
+.traffic-section{
+    background: rgba(30, 41, 59, 0.8);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #334155;
+}
+
+.section-title {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+.traffic-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #334155;
+}
+
+.traffic-item:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.traffic-label {
+    font-size: 15px;
+    color: #cbd5e1;
+    font-weight: 500;
+    width: 100px;
+}
+
+.traffic-bar-container {
+    flex-grow: 1;
+    height: 12px;
+    background-color:  #0f172a;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.traffic-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.traffic-bar.download {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    width: 24.2%; 
+}
+
+.traffic-bar.upload {
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+    width: 75.9%; 
+}
+
+.traffic-bar.total {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    width: 100%; 
+}
+
+.traffic-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: white;
+    width: 80px;
+    text-align: right;
+}
+
+.traffic-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    max-width: 130px;
+}
+
+.traffic-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.traffic-icon.download {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+}
+
+.traffic-icon.upload {
+    background-color: rgba(139, 92, 246, 0.2);
+    color: #8b5cf6;
+}
+
+.traffic-icon.total {
+    background-color: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+
+.traffic-percentage {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-left: 10px;
+    font-weight: 500;
+}
+
+.connection-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+        
+.connection-box {
+    background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+    padding: 25px 15px;
+    border-radius: 15px;
+    border: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    min-height: 100px;
+        }
+
+.connection-box:hover {
+    background-color: #334155; 
+    border-color: #475569;
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+        
+.connection-label {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: #94a3b8;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+        
+.connection-value {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+}
+
+        
+
+        

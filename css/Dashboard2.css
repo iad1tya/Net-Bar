@@ -1,0 +1,292 @@
+.network-card, .system-card {
+    padding: 35px;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+}
+
+.system-card {
+    background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+    border-radius: 25px;
+    padding: 35px;
+    border: 1px solid #334155;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.resource-item {
+    background: rgba(30, 41, 59, 0.8);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid #334155;
+    margin-bottom: 0;
+}
+
+.resource-item:last-child {
+    border-bottom: none;
+}
+        
+.resource-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+        
+.resource-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+}
+        
+.resource-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #fff;
+}
+        
+.resource-detail {
+    font-size: 13px;
+    font-weight: 400;
+    color: #aaa;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #0f172a;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+        
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+}
+        
+.cpu-fill {
+    width: 9.8%;
+    background-color: #66be69;
+}
+        
+.ram-fill {
+    width: 64.7%;
+    background-color: #2196F3; 
+}
+        
+.disk-fill {
+    width: 83.8%;
+    background-color: #b37e2f;
+}
+        
+.battery-fill {
+    width: 74%;
+    background-color: #c26fd0;
+}
+
+.thermal-state {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.thermal-icon {
+    color: #4CAF50; /* Green color for normal state */
+    font-size: 20px;
+    background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 4px rgba(76, 175, 80, 0.3));
+}    
+.thermal-badge {
+    background-color: #4CAF50;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    font-weight: bold;
+}
+        
+
+/* Tips section */
+.tips-section {
+    background: rgba(30, 41, 59, 0.8);
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #334155;
+    margin-top: 20px;
+}
+        
+.tips-title {
+    display: flex;
+    align-items: center;
+    gap:10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.bulb-icon {
+    color: #FFD700; /* Gold color for the bulb */
+    font-size: 20px;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.3));
+    transform: scale(1.1);
+    margin-right: 5px;
+}
+
+.flash-icon {
+    color: #00FF00; /* Green color for the flash */
+    font-size: 12px;
+    margin-right: 8px;
+    background: linear-gradient(45deg, #00FF00, #00CC00);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 3px rgba(0, 255, 0, 0.3));
+}
+
+.tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #334155;
+}
+        
+.tip:last-child {
+    margin-bottom: none;
+}
+        
+.warning {
+    color: #FF9800;
+}
+        
+@media (max-width: 768px) {
+    .status-bar {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        height: auto;
+        padding: 20px;
+        gap: 25px;
+    }
+    
+    .status-item:nth-child(2n)::after {
+        display: none;
+    }
+    
+    .traffic-item {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .traffic-info {
+        min-width: auto;
+    }
+    
+    .connection-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .network-card,
+    .system-card {
+        padding: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .connection-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .status-bar {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, 1fr);
+    }
+    
+    .status-item::after {
+        display: none;
+    }
+    
+    .status-item:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        bottom: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 2px;
+        background: #334155;
+    }
+}
+
+
+
+/* Add subtle shadows for depth */
+.network-card, .system-card, .status-bar {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Smooth transitions */
+.traffic-bar, .progress-fill, .connection-box {
+    transition: all 0.3s ease;
+}
+
+/* Better contrast for important values */
+.status-value, .connection-value {
+    color: #f1f5f9; /* Lighter white */
+}
+
+/* Improve Secure Network badge */
+.secure-badge {
+    background: linear-gradient(90deg, #10b981, #34d399);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding: 0;
+}
+
+/*  ADD MICRO-LAYOUT ENHANCEMENTS */
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: linear-gradient(180deg, #60a5fa, #a78bfa);
+    border-radius: 2px;
+}
+
+/* 10. IMPROVE VISUAL HIERARCHY WITH SPACING */
+.network-title + .network-subtitle {
+    margin-top: -5px;
+}
+
+.traffic-section + .connection-section {
+    margin-top: 10px;
+}
+
+/* Add smooth transitions for all interactive elements */
+.network-card, .system-card, .status-bar,
+.traffic-item, .connection-box, .resource-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Improve hover effects */
+.connection-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    border-color: #475569;
+}
+        
+

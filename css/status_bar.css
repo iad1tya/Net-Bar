@@ -1,0 +1,44 @@
+.status-bar{
+    height:80px;
+    display:grid;
+    flex-direction: row;
+    grid-template-columns: repeat(4, 1fr);
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color:white ;
+    border-radius: 20px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    max-width: 800px;
+    margin: 0 auto;
+    margin-bottom: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    gap: 20px;
+}
+.status-item{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.status-label{
+    font-size: 13px;
+    font-weight: 500;
+    color: #94a3b8;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.status-value{
+    color: #58a6ff; 
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(90deg, #60a5fa, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
