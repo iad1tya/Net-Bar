@@ -24,6 +24,19 @@ struct StatGraphView: View {
     var body: some View {
         Chart {
             ForEach(chartPoints, id: \.index) { point in
+                AreaMark(
+                    x: .value("Time", point.index),
+                    y: .value("Value", point.value)
+                )
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [color.opacity(0.5), color.opacity(0.1)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .interpolationMethod(.monotone)
+                
                 LineMark(
                     x: .value("Time", point.index),
                     y: .value("Value", point.value)
