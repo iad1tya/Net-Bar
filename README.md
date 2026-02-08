@@ -28,7 +28,7 @@
 
 ## Screenshots
 <p align="center">
-  <img src="Screenshots/sc-2.png" alt="Net Bar Settings" width="80%" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 10px;">
+  <img src="assets/netbar.gif" alt="Net Bar Settings" width="80%" style="border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 10px;">
 </p>
 
 ## Features
